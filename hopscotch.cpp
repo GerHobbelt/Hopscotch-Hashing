@@ -21,7 +21,7 @@ void Hopscotch::trial(){
 	oB = NULL;
   */
   Bucket* temp;
-  for(int i=0;i<10;i++){
+  for(int i=0;i<40;i++){
     temp=segments_arys+i;
     if(temp->_key != NULL )
     cout<<"Key:"<<*temp->_key<<" Data:"<<*temp->_data<<"Array index:"<<i<<endl;
@@ -29,10 +29,8 @@ void Hopscotch::trial(){
       cout<<"NULL at:"<<i<<endl;
   
   }
-
+   
   cout<<"--------------------"<<endl;
-
-
 }
 
 
@@ -172,7 +170,6 @@ bool Hopscotch::add(int *key,int *data){
         free_bucket->_data=data;
         free_bucket->_key=key;
         start_bucket->unlock();
-        trial();
         return true;
       }
       find_closer_bucket(&free_bucket,&free_distance);
