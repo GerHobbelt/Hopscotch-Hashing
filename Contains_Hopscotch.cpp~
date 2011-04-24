@@ -18,7 +18,7 @@ bool contains(unsigned int* key){
 		Bucket check_bucket = start_bucket;
 		for( int i = HOP_RANGE-1 ; i >= 0 ; i++){
 			if(1 == bits[i]){
-				if(*key == *(check_bucket->_key)){
+				if(*key == (check_bucket->_key)){
 					return true;
 				}	
 			}
