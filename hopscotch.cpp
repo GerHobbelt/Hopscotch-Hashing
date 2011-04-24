@@ -20,14 +20,20 @@ void Hopscotch::trial(){
 	printf("UnLock 10 %d\n",oB->_lock);
 	oB = NULL;
   */
+
   Bucket* temp;
-  for(int i=0;i<40;i++){
+// int i=65;
+  for(int i=0;i<80;i++){
     temp=segments_arys+i;
-    if(temp->_key != NULL )
+    if (temp == NULL)
+    {
+      cout<<"Temp Null at "<<i<<endl;
+    }
+    if(temp->_key != NULL)
     cout<<"Key:"<<*temp->_key<<" Data:"<<*temp->_data<<"Array index:"<<i<<endl;
     else
       cout<<"NULL at:"<<i<<endl;
-  
+     
   }
    
   cout<<"--------------------"<<endl;
@@ -59,7 +65,7 @@ int* Hopscotch::remove(int *key){
 	return NULL;
 } 
 
-void Hopscotch::find_closer_bucket(Bucket** free_bucket,int* free_distance) {
+void Hopscotch::find_closer_bucket(Bucket** free_bucket,int* free_distance,int &val) {
 	Bucket* move_bucket = *free_bucket -(HOP_RANGE-1);
 	for(int free_dist = (HOP_RANGE -1);free_dist>0;--free_dist) {
 		unsigned int start_hop_info = move_bucket->_hop_info;
@@ -91,7 +97,8 @@ void Hopscotch::find_closer_bucket(Bucket** free_bucket,int* free_distance) {
 		}
 		++move_bucket;
 	}
-	*free_bucket = NULL;
+	(*free_bucket)->_key = NULL;
+	val = 0;
 	*free_distance = 0;
 }
 
@@ -147,6 +154,7 @@ bool Hopscotch::contains(int* key){
 
 
 bool Hopscotch::add(int *key,int *data){
+  int val = 1; 
   unsigned int hash=((*key)&1023);
   Bucket* start_bucket=segments_arys+hash;
   start_bucket->lock();
@@ -172,10 +180,11 @@ bool Hopscotch::add(int *key,int *data){
         start_bucket->unlock();
         return true;
       }
-      find_closer_bucket(&free_bucket,&free_distance);
-    }while(NULL != free_bucket);
+      find_closer_bucket(&free_bucket,&free_distance,val);
+    }while(0 != val);
   }
   start_bucket->unlock();
+  cout<<"Called Resize"<<endl;
   return false;
 }
 

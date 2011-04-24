@@ -59,7 +59,7 @@ class Hopscotch {
 	bool contains(int* key);
 	bool add(int *key, int *data);
 	int* remove(int* key);
-  void find_closer_bucket(Bucket**,int*);
+  void find_closer_bucket(Bucket**,int*,int &);
 	void trial();
 
 };
