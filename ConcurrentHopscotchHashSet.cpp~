@@ -1,0 +1,16 @@
+#include "ConcurrentHopscotchHashSet.hpp"
+#include <stdio.h>
+
+
+
+/*ConcurrentHopscotchHashSet::ConcurrentHopscothHashSet()
+{
+	ConcurrentHopscotchHashSet::segments_ary = new Bucket[ConcurrentHopscotchHashSet::MAX_SEGMENTS];
+	
+}*/
+
+int main(int argc, char *argv[])
+{
+	ConcurrentHopscotchHashSet oHash();
+	printf("Succeed");
+}

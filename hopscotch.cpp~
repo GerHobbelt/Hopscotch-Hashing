@@ -1,0 +1,146 @@
+#include <iostream>
+#include <stdio.h>
+#include "hopscotch.hpp"
+using namespace std;
+
+Hopscotch::Hopscotch(){
+	segments_arys = new Bucket[1024];
+}
+
+void Hopscotch::trial(){
+	Bucket* oB = segments_arys+10;
+	cout<<"Size of the bucket "<<sizeof(*oB)<<"\n";
+	//printf("Before Lock 10 %d\n",oB->_lock);
+	//oB->lock();
+	//printf("Lock 10 %d\n",oB->_lock);
+	//oB->unlock();
+	//printf("UnLock 10 %d\n",oB->_lock);
+	for(int i=0;i<10;++i){
+	Bucket* oB1 = segments_arys+i;
+	cout<<"Bucket at "<<i<<" Key "<<*(oB1->_key)<<" Data "<<*(oB1->_data)<<"\n";
+	}
+	oB = NULL;
+}
+
+int* Hopscotch::add(int *key,int *data){
+  unsigned int hash= (*key) & 1023;
+  Bucket* start_bucket=segments_arys+hash;
+  start_bucket->lock();
+  if(contains(key)){
+    int *rc=data;
+    start_bucket->unlock();
+    return rc;
+  }
+
+  Bucket* free_bucket=start_bucket;
+  int free_distance=0;
+  for(;free_distance<ADD_RANGE;++free_distance){
+    if(NULL==free_bucket->_key && NULL == __sync_val_compare_and_swap(&(free_bucket->_key),NULL,-1))
+      break;
+    ++ free_bucket;
+  }
+
+  if(free_distance < ADD_RANGE){
+    do{
+      if(free_distance < HOP_RANGE){
+        start_bucket->_hop_info |= (1<<free_distance);
+        free_bucket->_data=data;
+        free_bucket->_key=key;
+        start_bucket->unlock();
+        return NULL;
+      }
+      std::find(&free_bucket,&free_distance);
+    }while(NULL != free_bucket);
+  }
+  start_bucket->unlock();
+  return NULL;
+}
+
+
+void Hopscotch::find(Bucket** free_bucket,int* free_distance) {
+	Bucket* move_bucket = *free_bucket -(HOP_RANGE-1);
+	for(int free_dist = (HOP_RANGE -1);free_dist>0;--free_dist) {
+		unsigned int start_hop_info = move_bucket->_hop_info;
+		int move_free_distance = -1;
+		unsigned int mask =1;
+		for (int i=0;i<free_dist;++i,mask <<=1) {
+			if(mask & start_hop_info){
+				move_free_distance = i;
+				break;
+			}		
+		}
+		if (-1 != move_free_distance) {
+			move_bucket->lock();
+			if(start_hop_info == move_bucket->_hop_info) {
+				Bucket* new_free_bucket = move_bucket + move_free_distance;
+				move_bucket->_hop_info |= (1 << free_dist);
+				free_bucket->_data = new_free_bucket->_data;
+				free_bucket->_key = new_free_bucket->_key;
+				++(move_bucket->_timestamp);
+				new_free_bucket->_key = -1;
+				new_free_bucket->_data = -1;
+				move_bucket->_hop_info &= ~(1<<move_free_distance);
+				*free_bucket = new_free_bucket;
+				*free_distance -=free_dist;
+				move_bucket->unlock();
+				return;
+			}
+			move_bucket->unlock();
+		}
+		++move_bucket;
+	}
+	*free_bucket = NULL;
+	*free_distance = 0;
+}
+
+
+namespace contains_NS{
+int* getBits(unsigned int number){
+	unsigned int value = number;
+	const unsigned int MASK = (1 << (HOP_RANGE - 1));
+	cout << "MASK" << MASK << endl;
+	int* hops = new int[HOP_RANGE];
+
+	for ( int i = 1; i <= HOP_RANGE; i++ ) 
+	{
+		hops[i-1] = ( value & MASK ? 1 : 0 );
+		value <<= 1;
+	}
+	return hops;
+}
+}
+
+bool Hopscotch::contains(int* key){
+	unsigned int hash = *key & 1023;
+	Bucket* start_bucket = segments_arys[hash];
+	unsigned int try_counter = 0;
+	unsigned int timestamp;
+	do{
+		timestamp = start_bucket->_timestamp;
+		unsigned int hop_info = start_bucket->_hop_info;
+		int* bits =  contains_NS::getBits(hop_info);
+		Bucket check_bucket = start_bucket;
+		for( int i = HOP_RANGE-1 ; i >= 0 ; i++){
+			if(1 == bits[i]){
+				if(*key == *(check_bucket->_key)){
+					return true;
+				}	
+			}
+			++check_bucket;
+		}
+		++try_counter;
+	}while(timestamp != start_bucket->_timestamp && try_counter < MAX_TRIES)
+	if(timestamp != start_bucket->_timestamp){
+		Bucket* check_bucket = start_bucket;
+		for(int i=0; i<HOP_RANGE ; i++){
+			if(*key == (check_bucket->_key))
+				return true;
+			++check_bucket;
+		}
+	}
+	return false;
+}
+
+
+
+
