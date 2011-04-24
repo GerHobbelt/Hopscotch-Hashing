@@ -12,7 +12,7 @@ int* remove(int *key){
 	for(int i=0;i<HOP_RANGE;++i,mask<<=1){
 		if(mask & hop_info){
 			Bucket* check_bucket = start_bucket+i;
-			if(key.equal(check_bucket->_key)){
+			if(*key==*(check_bucket->_key)){
 				int* rc = check_bucket->_data;
 				check_bucket->_key=NULL;
 				check_bucket->_data=NULL;
