@@ -52,7 +52,7 @@ public:
 //	_DATA* add(_KEY* key, _DATA* data);
 //	_DATA* remove(_KEY* key);
 	bool contains(int* key);
-	int* add(int key, int data);
+	int* add(int *key, int *data);
 	int* remove(int* key);
 	void trial();
 };

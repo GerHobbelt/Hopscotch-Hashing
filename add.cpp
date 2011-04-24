@@ -3,7 +3,7 @@
 #include "next_bucket.cpp"
 using namespace std;
 
-add(int key,int data){
+int* add(int *key,int *data){
   unsigned int hash=key&1023;
   Bucket* start_bucket=segments_ary[hash];
   start_bucket->lock();
