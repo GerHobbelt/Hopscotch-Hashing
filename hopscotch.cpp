@@ -1,8 +1,9 @@
-#include <iostream.h>
+#include <iostream>
 #include "hopscotch.hpp"
 #include "add.cpp"
 #include "contains.cpp"
-
+#include "remove.cpp"
+usign namespace std;
 
 Hopscotch::Hopscotch(){
 	segments_arys = new Bucket[1024];
