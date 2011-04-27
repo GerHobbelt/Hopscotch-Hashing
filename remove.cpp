@@ -1,4 +1,8 @@
-_DATA* remove(_KEY_* key){
+#include <iostream>
+#include "hopscotch.hpp"
+using namespace std;
+
+int* remove(int *key){
 	unsigned int hash = (key&1023);
 	Bucket* start_bucket = segments_ary[hash];
 	start_bucket->lock();
@@ -9,7 +13,7 @@ _DATA* remove(_KEY_* key){
 		if(mask & hop_info){
 			Bucket* check_bucket = start_bucket+i;
 			if(key.equal(check_bucket->_key)){
-				_DATA* rc = check_bucket->_data;
+				int* rc = check_bucket->_data;
 				check_bucket->_key=NULL;
 				check_bucket->_data=NULL;
 				start_bucket->hop_info &=~(1<<i);
