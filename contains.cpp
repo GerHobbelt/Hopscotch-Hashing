@@ -1,21 +1,17 @@
-#include <stdio.h>
 #include <iostream>
-using std::cout;
-using std::cin;
-using std::endl;
+using namespace std;
 
-unsigned int HOP_RANGE = 32;
 
 bool contains(unsigned int* key){
 	unsigned int hash = *key & 1023;
-	Bucket* start_bucket = segments_ary[hash];
+	Bucket* start_bucket = segments_arys[hash];
 	unsigned int try_counter = 0;
 	unsigned int timestamp;
 	do{
 		timestamp = start_bucket->_timestamp;
 		unsigned int hop_info = start_bucket->_hop_info;
 		int* bits = getBits(hop_info);
-		Bucket check_bucket = start_bucket;
+		Bucket* check_bucket = start_bucket;
 		for( int i = HOP_RANGE-1 ; i >= 0 ; i++){
 			if(1 == bits[i]){
 				if(*key == *(check_bucket->_key)){
@@ -26,6 +22,7 @@ bool contains(unsigned int* key){
 		}
 		++try_counter;
 	}while(timestamp != start_bucket->_timestamp && try_counter < MAX_TRIES)
+
 	if(timestamp != start_bucket->_timestamp){
 		Bucket* check_bucket = start_bucket;
 		for(int i=0; i<HOP_RANGE ; i++){
@@ -40,7 +37,7 @@ bool contains(unsigned int* key){
 int* getBits(unsigned int number){
 	unsigned int value = number;
 	const unsigned int MASK = (1 << (HOP_RANGE - 1));
-	cout << "MASK" << MASK << endl;
+
 	int* hops = new int[HOP_RANGE];
 
 	for ( int i = 1; i <= HOP_RANGE; i++ ) 

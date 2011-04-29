@@ -1,13 +1,12 @@
 #include <iostream>
-#include "hopscotch.hpp"
 using namespace std;
 
 int* remove(int *key){
-	unsigned int hash = (key&1023);
-	Bucket* start_bucket = segments_ary[hash];
+	unsigned int hash = (*key&1023);
+	Bucket* start_bucket = segments_arys[hash];
 	start_bucket->lock();
 	
-	unsigned int hop_info = start_bucket->hop_info;
+	unsigned int hop_info = start_bucket->_hop_info;
 	unsigned int mask = 1;
 	for(int i=0;i<HOP_RANGE;++i,mask<<=1){
 		if(mask & hop_info){

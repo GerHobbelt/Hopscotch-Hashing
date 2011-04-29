@@ -1,7 +1,8 @@
-#include "Hopscotch.hpp"
+#include<iostream>
+using namespace std;
 
 
-void Hopscotch::find_closer_free_bucket(Bucket** free_bucket,int* free_distance) {
+void find_closer_bucket(Bucket** free_bucket,int* free_distance) {
 	Bucket* move_bucket = *free_bucket -(HOP_RANGE-1);
 	for(int free_dist = (HOP_RANGE -1);free_dist>0;--free_dist) {
 		unsigned int start_hop_info = move_bucket->_hop_info;
