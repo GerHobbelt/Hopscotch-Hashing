@@ -36,7 +36,7 @@ class Hopscotch {
 			pthread_mutex_lock(&lock_mutex);
       while(1){        
 		    if (_lock==0){
-        cout << "Thread aquired lock " << tid << endl;
+        //cout << "Thread aquired lock " << tid << endl;
 					_lock =1;
 				  pthread_mutex_unlock(&lock_mutex);
 				  break;              
