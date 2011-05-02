@@ -6,7 +6,7 @@ class Hopscotch {
   private:
 	static const int HOP_RANGE = 32;
 	static const int ADD_RANGE = 256;
- 	static const int MAX_SEGMENTS = 1023; // Including neighbourhodd for last hash location
+ 	static const int MAX_SEGMENTS = 1024; // Including neighbourhodd for last hash location
 	static const int MAX_TRIES = 2;
   int* BUSY;
 	
