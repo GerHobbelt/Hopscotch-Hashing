@@ -9,6 +9,7 @@ Hopscotch::Hopscotch(){
   *BUSY=-1;
 }
 
+MAX_TRIES = 5;
 
 
 void Hopscotch::trial(){

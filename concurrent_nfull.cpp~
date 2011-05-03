@@ -1,0 +1,64 @@
+#include<iostream>
+#include "hopscotch.cpp"
+#include <pthread.h>
+
+using namespace std;
+
+Hopscotch *obj;
+
+void *run(void* x){
+//  sleep(1000);
+  
+  pthread_t tid;
+  tid = pthread_self();
+  int key;
+  key = (int)x;
+  int val;
+  val = key * 100; 
+
+  cout << "Adding key : " << key << endl;
+  cout << "Thread "<< tid <<" calling add " << endl;
+  obj->add(&key,&val); 
+  cout << "Thread "<< tid <<" FINISHED add " << endl;  
+  //obj->trial();
+  pthread_exit(NULL);
+    
+}
+
+
+
+int main()
+{
+  obj = new Hopscotch;
+
+  //Fill up the neighborhood
+  int key1[33];
+  int val1[33];
+  for(int i=0;i<31;++i){
+   key1[i] = i * 1024;
+   val1[i] = 100+i;
+   obj->add(&key1[i],&val1[i]);
+  } 
+
+  int NUM_THREADS = 2;
+  pthread_t threads[NUM_THREADS];
+  int rc;   
+
+  int key[NUM_THREADS] = {1024 * 32, 1024 * 33};
+  int val[NUM_THREADS] = {100, 200};
+  for(int t=0; t<NUM_THREADS; t++){    
+    rc = pthread_create(&threads[t], NULL, run, (void *)(key[t]));
+    if (rc){
+      printf("ERROR; return code from pthread_create() is %d\n", rc);
+    }
+  }
+  
+
+
+  //obj->trial(); 
+  pthread_exit(NULL);
+
+
+  return 0;
+ 
+}
