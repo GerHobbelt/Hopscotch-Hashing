@@ -50,8 +50,8 @@ class probing {
 	Bucket* segments_arys;
 
   public:
-	Hopscotch();
-  ~Hopscotch();
+	probing();
+  ~probing();
 	bool contains(int* key);
 	bool add(int *key, int *data);
 	int* remove(int* key);

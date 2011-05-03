@@ -1,13 +1,13 @@
 #include <iostream>
-#include "probe.hpp"
+#include "probing.hpp"
 using namespace std;
 
-Hopscotch::Hopscotch(){
+probing::probing(){
 	segments_arys = new Bucket[MAX_SEGMENTS];
 }
 
 
-void Hopscotch::trial(){
+void probing::trial(){
 
   Bucket* temp;
   for(int i=0;i<40;i++){
@@ -24,8 +24,8 @@ void Hopscotch::trial(){
 
 
 
-int* Hopscotch::remove(int *key){
-    int* rc    = NULL:
+int* probing::remove(int *key){
+    int* rc    = NULL;
 
     unsigned int hash = ((*key)&(MAX_SEGMENTS-1));
     Bucket* start_bucket = segments_arys+hash;
@@ -71,7 +71,7 @@ int* Hopscotch::remove(int *key){
 }
 
 
-bool Hopscotch::contains(int* key){
+bool probing::contains(int* key){
    
     unsigned int hash = ((*key)&(MAX_SEGMENTS-1));
     Bucket* start_bucket = segments_arys+hash;
@@ -96,7 +96,7 @@ bool Hopscotch::contains(int* key){
 
 
 
-bool Hopscotch::add(int *key,int *data){
+bool probing::add(int *key,int *data){
   
   unsigned int hash=((*key)&(MAX_SEGMENTS-1));
   Bucket* start_bucket=segments_arys+hash;
