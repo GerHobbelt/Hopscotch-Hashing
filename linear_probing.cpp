@@ -22,9 +22,10 @@ int main()
   for(int j=0;j<100;j++)
   {
 
-    if(!test_probe->contains(&i[j]))
+    if(!test_probe->contains(&i[j])){
       cout<<"Error!!"<<endl;
     return 0;
+    }
   }
 
   cout<<"Success"<<endl;
