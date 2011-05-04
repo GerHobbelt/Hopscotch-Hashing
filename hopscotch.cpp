@@ -128,18 +128,24 @@ bool Hopscotch::contains(int* key){
 		//cout << "Fast Path : try counter" << try_counter << endl;
 		timestamp = start_bucket->_timestamp;
 		unsigned int hop_info = start_bucket->_hop_info;
-		int* bits = getBits(hop_info,HOP_RANGE);
-
+    
 		Bucket* check_bucket = start_bucket;
-		for( int i = HOP_RANGE-1 ; i >= 0 ; i--){
-			if(1 == bits[i]){
+    unsigned int temp;
+
+		for( int i = 0 ; i > HOP_RANGE ; i--){
+      temp=hop_info;
+      temp=temp>>i;
+ 
+			if(temp&1){
 				if(*key == *(check_bucket->_key)){
 					//cout << "Found!!" << endl;
 					return true;
 				}	
 			}
+ 
 			++check_bucket;
 		}
+
 		++try_counter;
 	}while(timestamp != start_bucket->_timestamp && try_counter < MAX_TRIES);
 	//cout << "Slow path " << endl;

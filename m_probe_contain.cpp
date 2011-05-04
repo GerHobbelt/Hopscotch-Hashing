@@ -16,8 +16,10 @@ int main()
   }
   int l[10];
   l[0] = 1048577;
-    if(!test_probe->contains(&l[0]))
+  for(int q=0;q<2097152;q++){
+    if(test_probe->contains(&l[0]))
       cout<<"Error!!"<<endl;
+  }
     return 0;
 
 }
