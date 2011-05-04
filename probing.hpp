@@ -4,7 +4,7 @@ using namespace std;
 
 class probing {
   private:
- 	static const int MAX_SEGMENTS = 1024;
+ 	static const int MAX_SEGMENTS = 1048576;
   
   int* BUSY;
 	

@@ -43,7 +43,7 @@ void Hopscotch::trial(){
 
 
 int* Hopscotch::remove(int *key){
-	unsigned int hash = ((*key)&1023);
+	unsigned int hash = ((*key)&(MAX_SEGMENTS-1));
 	Bucket* start_bucket = segments_arys+hash;
 	start_bucket->lock();
 	
@@ -120,12 +120,12 @@ int* getBits(unsigned int number,int HOP_RANGE){
 }
 
 bool Hopscotch::contains(int* key){
-	unsigned int hash = ((*key)&1023);
+	unsigned int hash = ((*key)&(MAX_SEGMENTS-1));
 	Bucket* start_bucket = segments_arys+hash;
 	unsigned int try_counter = 0;
 	unsigned int timestamp;
 	do{
-		cout << "Fast Path : try counter" << try_counter << endl;
+		//cout << "Fast Path : try counter" << try_counter << endl;
 		timestamp = start_bucket->_timestamp;
 		unsigned int hop_info = start_bucket->_hop_info;
 		int* bits = getBits(hop_info,HOP_RANGE);
@@ -134,7 +134,7 @@ bool Hopscotch::contains(int* key){
 		for( int i = HOP_RANGE-1 ; i >= 0 ; i--){
 			if(1 == bits[i]){
 				if(*key == *(check_bucket->_key)){
-					cout << "Found!!" << endl;
+					//cout << "Found!!" << endl;
 					return true;
 				}	
 			}
@@ -142,7 +142,7 @@ bool Hopscotch::contains(int* key){
 		}
 		++try_counter;
 	}while(timestamp != start_bucket->_timestamp && try_counter < MAX_TRIES);
-	cout << "Slow path " << endl;
+	//cout << "Slow path " << endl;
 	if(timestamp != start_bucket->_timestamp){
 		Bucket* check_bucket = start_bucket;
 		for(int i=0; i<HOP_RANGE ; i++){
@@ -151,7 +151,7 @@ bool Hopscotch::contains(int* key){
 			++check_bucket;
 		}
 	}
-	cout << "Not found!!" << endl;
+	//cout << "Not found!!" << endl;
 	return false;
 }
 
@@ -159,10 +159,10 @@ bool Hopscotch::contains(int* key){
 
 bool Hopscotch::add(int *key,int *data){
   int val = 1; 
-  unsigned int hash=((*key)&1023);
+  unsigned int hash=((*key)&(MAX_SEGMENTS-1));
   Bucket* start_bucket=segments_arys+hash;
   start_bucket->lock();
-  sleep(1);
+  //sleep(1);
   if(contains(key)){
     start_bucket->unlock();
     return false;
@@ -184,7 +184,7 @@ bool Hopscotch::add(int *key,int *data){
         free_bucket->_key=key;
         start_bucket->unlock();
         return true;
-      }
+      }  
       find_closer_bucket(&free_bucket,&free_distance,val);
     }while(0 != val);
   }
