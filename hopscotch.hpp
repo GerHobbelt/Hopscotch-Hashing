@@ -6,7 +6,7 @@ class Hopscotch {
   private:
 	static const int HOP_RANGE = 32;
 	static const int ADD_RANGE = 256;
- 	static const int MAX_SEGMENTS = 1024; // Including neighbourhodd for last hash location
+ 	static const int MAX_SEGMENTS = 1048576; // Including neighbourhodd for last hash location
 	static const int MAX_TRIES = 2;
   int* BUSY;
 	
@@ -31,18 +31,15 @@ class Hopscotch {
   	}
 		
     void lock(){
-      pthread_t tid;
-      tid = pthread_self();
-			pthread_mutex_lock(&lock_mutex);
+      
+      			pthread_mutex_lock(&lock_mutex);
       while(1){        
 		    if (_lock==0){
-        cout << "Thread aquired lock " << tid << endl;
-					_lock =1;
+        				_lock =1;
 				  pthread_mutex_unlock(&lock_mutex);
 				  break;              
 			  }
-        cout << "Thread waiting " << tid << endl;
-      	pthread_cond_wait(&lock_cv, &lock_mutex); 
+                    pthread_cond_wait(&lock_cv, &lock_mutex); 
   
  		  }
 		}

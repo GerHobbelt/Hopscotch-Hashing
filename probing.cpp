@@ -1,5 +1,5 @@
 #include <iostream>
-#include "probing.hpp"
+#include"probing.hpp"
 using namespace std;
 
 probing::probing(){
@@ -10,7 +10,7 @@ probing::probing(){
 void probing::trial(){
 
   Bucket* temp;
-  for(int i=0;i<40;i++){
+  for(int i=0;i<20;i++){
     temp=segments_arys+i;
     if(temp->_key != NULL )
     cout<<"Key:"<<*temp->_key<<" Data:"<<*temp->_data<<"Array index:"<<i<<endl;
@@ -30,16 +30,17 @@ int* probing::remove(int *key){
     unsigned int hash = ((*key)&(MAX_SEGMENTS-1));
     Bucket* start_bucket = segments_arys+hash;
     start_bucket->lock();   
-    if (*key == *(start_bucket->_key)){
-        rc = start_bucket->_data;
-        start_bucket->_key=NULL;
-        start_bucket->_data=NULL;
-        start_bucket->isNULL = 1;
-        start_bucket->unlock();
-         return rc;
-    }
-       
-     if((key==NULL)&&((start_bucket->isNULL)==0)){
+    if (!(start_bucket->_key==NULL)){	
+      if (*key == *(start_bucket->_key)){
+          rc = start_bucket->_data;
+          start_bucket->_key=NULL;
+          start_bucket->_data=NULL;
+          start_bucket->isNULL = 1;
+          start_bucket->unlock();
+          return rc;
+      }
+    }   
+     if((start_bucket->_key==NULL)&&((start_bucket->isNULL)==0)){
         start_bucket->unlock();
         return NULL;
 
@@ -49,17 +50,17 @@ int* probing::remove(int *key){
     for(unsigned int i = start;(i&(MAX_SEGMENTS-1)) != hash;i++){
       unsigned int temp = (i&(MAX_SEGMENTS-1));
       Bucket* check_bucket = segments_arys+temp;
-     
-        if (*key == *(check_bucket->_key)){
-            rc = check_bucket->_data;
-            check_bucket->_key=NULL;
-            check_bucket->_data=NULL;
-            check_bucket->isNULL = 1;
-            start_bucket->unlock();
-             return rc;
-        }
-            
-        if((key==NULL)&&((check_bucket->isNULL)==0)){
+       if(!(check_bucket->_key==NULL)){
+          if (*key == *(check_bucket->_key)){
+              rc = check_bucket->_data;
+              check_bucket->_key=NULL;
+              check_bucket->_data=NULL;
+              check_bucket->isNULL = 1;
+              start_bucket->unlock();
+              return rc;
+          }
+       }     
+        if((check_bucket->_key==NULL)&&((check_bucket->isNULL)==0)){
         start_bucket->unlock();
         return NULL;   
         }   
@@ -75,20 +76,22 @@ bool probing::contains(int* key){
    
     unsigned int hash = ((*key)&(MAX_SEGMENTS-1));
     Bucket *start_bucket = segments_arys+hash;
+    if(!(start_bucket->_key==NULL)){
+      if (*key == *(start_bucket->_key))
+         return true;     
+    }
     if((start_bucket->_key==NULL)&&((start_bucket->isNULL)==0))
       return false;
-    if (*key == *(start_bucket->_key)){
-         return true;     
-     }
     unsigned int start = hash+1;
     for(unsigned int i = start;(i&(MAX_SEGMENTS-1)) != hash;i++){
       unsigned int temp = (i&(MAX_SEGMENTS-1));
       Bucket* check_bucket = segments_arys+temp;
+      if(!(check_bucket->_key==NULL)){
+        if (*key == *(check_bucket->_key))
+         return true;     
+      }	
       if((check_bucket->_key==NULL)&&((check_bucket->isNULL)==0))
           return false;   
-      if (*key == *(check_bucket->_key)){
-         return true;     
-       }
     }
     return false;
 }
@@ -133,6 +136,7 @@ bool probing::add(int *key,int *data){
   }
   
   start_bucket->unlock();  
+  cout<<"Call Resize"<<endl;
   return false;
 }
 
