@@ -74,22 +74,21 @@ int* probing::remove(int *key){
 bool probing::contains(int* key){
    
     unsigned int hash = ((*key)&(MAX_SEGMENTS-1));
-    Bucket* start_bucket = segments_arys+hash;
+    Bucket *start_bucket = segments_arys+hash;
+    if((start_bucket->_key==NULL)&&((start_bucket->isNULL)==0))
+      return false;
     if (*key == *(start_bucket->_key)){
          return true;     
      }
-     if((key==NULL)&&((start_bucket->isNULL)==0))
-      return false;
-
     unsigned int start = hash+1;
     for(unsigned int i = start;(i&(MAX_SEGMENTS-1)) != hash;i++){
       unsigned int temp = (i&(MAX_SEGMENTS-1));
       Bucket* check_bucket = segments_arys+temp;
+      if((check_bucket->_key==NULL)&&((check_bucket->isNULL)==0))
+          return false;   
       if (*key == *(check_bucket->_key)){
          return true;     
        }
-      if((key==NULL)&&((check_bucket->isNULL)==0))
-          return false;   
     }
     return false;
 }
@@ -103,13 +102,10 @@ bool probing::add(int *key,int *data){
   Bucket* probe_bucket;
 
   start_bucket->lock();
-
   if(contains(key)){
     start_bucket->unlock();
     return false;
   }
-
-
   if(start_bucket->_key==NULL){
     start_bucket->_key=key;
     start_bucket->_data=data;
