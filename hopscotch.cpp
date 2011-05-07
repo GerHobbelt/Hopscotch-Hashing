@@ -104,21 +104,6 @@ void Hopscotch::find_closer_bucket(Bucket** free_bucket,int* free_distance,int &
 }
 
 
-int* getBits(unsigned int number,int HOP_RANGE){
-
-	unsigned int value = number;
-	const unsigned int MASK = (1 << (HOP_RANGE - 1));
-
-	int* hops = new int[HOP_RANGE];
-
-	for ( int i = 1; i <= HOP_RANGE; i++ ) 
-	{
-		hops[i-1] = ( value & MASK ? 1 : 0 );
-		value <<= 1;
-	}
-	return hops;
-}
-
 bool Hopscotch::contains(int* key){
 	unsigned int hash = ((*key)&(MAX_SEGMENTS-1));
 	Bucket* start_bucket = segments_arys+hash;
@@ -132,7 +117,7 @@ bool Hopscotch::contains(int* key){
 		Bucket* check_bucket = start_bucket;
     unsigned int temp;
 
-		for( int i = 0 ; i > HOP_RANGE ; i--){
+		for( int i = 0 ; i < HOP_RANGE ; i++){
       temp=hop_info;
       temp=temp>>i;
  
